@@ -6,6 +6,8 @@ import (
     "gopkg.in/yaml.v2"
     "io/ioutil"
     "net/http"
+	"os"
+	"path/filepath"
 )
 
 // Struct to hold the service name
@@ -25,7 +27,15 @@ var serviceName ServiceInfo
 
 // Function to load the service name from the YAML file
 func loadServiceName() error {
-    yamlFile, err := ioutil.ReadFile("TS29222_CAPIF_Publish_Service_API.yaml")
+	dir, err := os.Getwd()
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    fmt.Println("Current directory:", dir)
+	filename:= "TS29222_CAPIF_Publish_Service_API.yaml"
+	fullPath := filepath.Join(dir, filename)
+    yamlFile, err := ioutil.ReadFile(fullPath)
     if err != nil {
         return err
     }
@@ -37,6 +47,7 @@ func loadServiceName() error {
     }
 
     serviceName = ServiceInfo{Name: yamlInfo.Info.Title}
+	fmt.Println("serviceName")
     return nil
 }
 

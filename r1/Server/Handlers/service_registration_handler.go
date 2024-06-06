@@ -16,7 +16,7 @@ func PublishServiceHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-
+    loadServiceName()
     response := request 
     respondWithJSON(w, http.StatusCreated, response)
 }
@@ -86,4 +86,29 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(code)
     w.Write(response)
+}
+
+func loadServiceName() error {
+	dir, err := os.Getwd()
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    fmt.Println("Current directory:", dir)
+	filename:= "../../../examples/TS29222_CAPIF_Publish_Service_API.yaml"
+	fullPath := filepath.Join(dir, filename)
+    yamlFile, err := ioutil.ReadFile(fullPath)
+    if err != nil {
+        return err
+    }
+
+    var yamlInfo YamlInfo
+    err = yaml.Unmarshal(yamlFile, &yamlInfo)
+    if err != nil {
+        return err
+    }
+
+    serviceName = ServiceInfo{Name: yamlInfo.Info.Title}
+	fmt.Println("serviceName")
+    return nil
 }
