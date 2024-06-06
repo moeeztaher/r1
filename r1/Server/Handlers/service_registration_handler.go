@@ -3,9 +3,15 @@ package Handlers
 import (
     "encoding/json"
     "net/http"
-
+    "fmt"
+    "github.com/gorilla/mux"
     "r1/r1/Apis"
+    "io/ioutil"
+    "os"
+    "path/filepath"
 )
+
+var serviceRequests []Apis.PublishServiceRequest
 
 func PublishServiceHandler(w http.ResponseWriter, r *http.Request) {
     var request Apis.PublishServiceRequest
@@ -16,16 +22,22 @@ func PublishServiceHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    loadServiceName()
-    response := request 
-    respondWithJSON(w, http.StatusCreated, response)
+    serviceInfo, err := loadServiceMockResponse()
+    if err != nil {
+        fmt.Println("Error loading service name:", err)
+        respondWithError(w, http.StatusInternalServerError, "Error loading service name")
+        return
+    }
+
+    serviceRequests = append(serviceRequests, request)
+    respondWithJSON(w, http.StatusCreated, serviceInfo)
 }
 
 func GetServiceApisHandler(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     apfId := vars["apfId"]
-
-    filteredRequests := serviceRequests //add filtering logic
+    _ = apfId
+    filteredRequests := serviceRequests 
 
     respondWithJSON(w, http.StatusOK, filteredRequests)
 }
@@ -33,6 +45,7 @@ func GetServiceApisHandler(w http.ResponseWriter, r *http.Request) {
 func UpdateServiceApiHandler(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     apfId := vars["apfId"]
+    _ = apfId
     serviceApiId := vars["serviceApiId"]
 
     var updatedRequest Apis.PublishServiceRequest
@@ -44,7 +57,7 @@ func UpdateServiceApiHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     for i, request := range serviceRequests {
-        if request.ID == serviceApiId {
+        if request.ApiId == serviceApiId {
             serviceRequests[i] = updatedRequest
             respondWithJSON(w, http.StatusOK, updatedRequest)
             return
@@ -57,10 +70,11 @@ func UpdateServiceApiHandler(w http.ResponseWriter, r *http.Request) {
 func DeleteServiceApiHandler(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     apfId := vars["apfId"]
+    _ = apfId
     serviceApiId := vars["serviceApiId"]
 
     for i, request := range serviceRequests {
-        if request.ID == serviceApiId {
+        if request.ApiId == serviceApiId {
             serviceRequests = append(serviceRequests[:i], serviceRequests[i+1:]...)
             w.WriteHeader(http.StatusNoContent)
             return
@@ -69,7 +83,6 @@ func DeleteServiceApiHandler(w http.ResponseWriter, r *http.Request) {
 
     respondWithError(w, http.StatusNotFound, "Service not found")
 }
-
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
     details := Apis.ProblemDetails{
@@ -82,33 +95,40 @@ func respondWithError(w http.ResponseWriter, code int, message string) {
 }
 
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-    response, _ := json.Marshal(payload)
+    response, err := json.Marshal(payload)
+    if err != nil {
+        fmt.Println("Error marshalling JSON:", err)
+        w.WriteHeader(http.StatusInternalServerError)
+        w.Write([]byte("Internal Server Error"))
+        return
+    }
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(code)
     w.Write(response)
 }
 
-func loadServiceName() error {
-	dir, err := os.Getwd()
+
+func loadServiceMockResponse() (Apis.ServiceInfoMock, error) {
+    dir, err := os.Getwd()
     if err != nil {
         fmt.Println("Error:", err)
-        return
+        return Apis.ServiceInfoMock{}, err
     }
     fmt.Println("Current directory:", dir)
-	filename:= "../../../examples/TS29222_CAPIF_Publish_Service_API.yaml"
-	fullPath := filepath.Join(dir, filename)
-    yamlFile, err := ioutil.ReadFile(fullPath)
+    filename := "examples/TS29222_CAPIF_Publish_Service_API.json"
+    fullPath := filepath.Join(dir, filename)
+    jsonFile, err := ioutil.ReadFile(fullPath)
     if err != nil {
-        return err
+        fmt.Println("Error reading file:", err)
+        return Apis.ServiceInfoMock{}, err
     }
 
-    var yamlInfo YamlInfo
-    err = yaml.Unmarshal(yamlFile, &yamlInfo)
+    var serviceInfo Apis.ServiceInfoMock
+    err = json.Unmarshal(jsonFile, &serviceInfo)
     if err != nil {
-        return err
+        fmt.Println("Error unmarshalling JSON:", err)
+        return Apis.ServiceInfoMock{}, err
     }
 
-    serviceName = ServiceInfo{Name: yamlInfo.Info.Title}
-	fmt.Println("serviceName")
-    return nil
+    return serviceInfo, nil
 }

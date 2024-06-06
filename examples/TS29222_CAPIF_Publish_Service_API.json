@@ -1,0 +1,339 @@
+{
+  "apiName": "string",
+  "apiId": "string",
+  "apiStatus": {
+    "aefIds": [
+      "string"
+    ]
+  },
+  "aefProfiles": [
+    {
+      "aefId": "string",
+      "versions": [
+        {
+          "apiVersion": "string",
+          "expiry": "2024-06-06T22:32:45.576Z",
+          "resources": [
+            {
+              "resourceName": "string",
+              "commType": "REQUEST_RESPONSE",
+              "uri": "string",
+              "custOpName": "string",
+              "custOperations": [
+                {
+                  "commType": "REQUEST_RESPONSE",
+                  "custOpName": "string",
+                  "operations": [
+                    "GET",
+                    "string"
+                  ],
+                  "description": "string"
+                }
+              ],
+              "operations": [
+                "GET",
+                "string"
+              ],
+              "description": "string"
+            }
+          ],
+          "custOperations": [
+            {
+              "commType": "REQUEST_RESPONSE",
+              "custOpName": "string",
+              "operations": [
+                "GET",
+                "string"
+              ],
+              "description": "string"
+            }
+          ]
+        }
+      ],
+      "protocol": "HTTP_1_1",
+      "dataFormat": "JSON",
+      "securityMethods": [
+        "PSK",
+        "string"
+      ],
+      "domainName": "string",
+      "interfaceDescriptions": [
+        {
+          "ipv4Addr": "string",
+          "ipv6Addr": "string",
+          "fqdn": "string",
+          "port": 65535,
+          "apiPrefix": "string",
+          "securityMethods": [
+            "PSK",
+            "string"
+          ]
+        },
+        {
+          "ipv4Addr": "string",
+          "ipv6Addr": "string",
+          "fqdn": "string",
+          "port": 65535,
+          "apiPrefix": "string",
+          "securityMethods": [
+            "PSK",
+            "string"
+          ]
+        },
+        {
+          "ipv4Addr": "string",
+          "ipv6Addr": "string",
+          "fqdn": "string",
+          "port": 65535,
+          "apiPrefix": "string",
+          "securityMethods": [
+            "PSK",
+            "string"
+          ]
+        }
+      ],
+      "aefLocation": {
+        "civicAddr": {
+          "country": "string",
+          "A1": "string",
+          "A2": "string",
+          "A3": "string",
+          "A4": "string",
+          "A5": "string",
+          "A6": "string",
+          "PRD": "string",
+          "POD": "string",
+          "STS": "string",
+          "HNO": "string",
+          "HNS": "string",
+          "LMK": "string",
+          "LOC": "string",
+          "NAM": "string",
+          "PC": "string",
+          "BLD": "string",
+          "UNIT": "string",
+          "FLR": "string",
+          "ROOM": "string",
+          "PLC": "string",
+          "PCN": "string",
+          "POBOX": "string",
+          "ADDCODE": "string",
+          "SEAT": "string",
+          "RD": "string",
+          "RDSEC": "string",
+          "RDBR": "string",
+          "RDSUBBR": "string",
+          "PRM": "string",
+          "POM": "string",
+          "usageRules": "string",
+          "method": "string",
+          "providedBy": "string"
+        },
+        "geoArea": {
+          "shape": "POINT",
+          "point": {
+            "lon": 180,
+            "lat": 90
+          }
+        },
+        "dcId": "string"
+      },
+      "serviceKpis": {
+        "maxReqRate": 0,
+        "maxRestime": 0,
+        "availability": 0,
+        "avalComp": "string",
+        "avalGraComp": "string",
+        "avalMem": "string",
+        "avalStor": "string",
+        "conBand": 0
+      },
+      "ueIpRange": {
+        "ueIpv4AddrRanges": [
+          {
+            "start": "198.51.100.1",
+            "end": "198.51.100.1"
+          }
+        ],
+        "ueIpv6AddrRanges": [
+          {
+            "start": "2001:db8:85a3::8a2e:370:7334",
+            "end": "2001:db8:85a3::8a2e:370:7334"
+          }
+        ]
+      }
+    },
+    {
+      "aefId": "string",
+      "versions": [
+        {
+          "apiVersion": "string",
+          "expiry": "2024-06-06T22:32:45.577Z",
+          "resources": [
+            {
+              "resourceName": "string",
+              "commType": "REQUEST_RESPONSE",
+              "uri": "string",
+              "custOpName": "string",
+              "custOperations": [
+                {
+                  "commType": "REQUEST_RESPONSE",
+                  "custOpName": "string",
+                  "operations": [
+                    "GET",
+                    "string"
+                  ],
+                  "description": "string"
+                }
+              ],
+              "operations": [
+                "GET",
+                "string"
+              ],
+              "description": "string"
+            }
+          ],
+          "custOperations": [
+            {
+              "commType": "REQUEST_RESPONSE",
+              "custOpName": "string",
+              "operations": [
+                "GET",
+                "string"
+              ],
+              "description": "string"
+            }
+          ]
+        }
+      ],
+      "protocol": "HTTP_1_1",
+      "dataFormat": "JSON",
+      "securityMethods": [
+        "PSK",
+        "string"
+      ],
+      "domainName": "string",
+      "interfaceDescriptions": [
+        {
+          "ipv4Addr": "string",
+          "ipv6Addr": "string",
+          "fqdn": "string",
+          "port": 65535,
+          "apiPrefix": "string",
+          "securityMethods": [
+            "PSK",
+            "string"
+          ]
+        },
+        {
+          "ipv4Addr": "string",
+          "ipv6Addr": "string",
+          "fqdn": "string",
+          "port": 65535,
+          "apiPrefix": "string",
+          "securityMethods": [
+            "PSK",
+            "string"
+          ]
+        },
+        {
+          "ipv4Addr": "string",
+          "ipv6Addr": "string",
+          "fqdn": "string",
+          "port": 65535,
+          "apiPrefix": "string",
+          "securityMethods": [
+            "PSK",
+            "string"
+          ]
+        }
+      ],
+      "aefLocation": {
+        "civicAddr": {
+          "country": "string",
+          "A1": "string",
+          "A2": "string",
+          "A3": "string",
+          "A4": "string",
+          "A5": "string",
+          "A6": "string",
+          "PRD": "string",
+          "POD": "string",
+          "STS": "string",
+          "HNO": "string",
+          "HNS": "string",
+          "LMK": "string",
+          "LOC": "string",
+          "NAM": "string",
+          "PC": "string",
+          "BLD": "string",
+          "UNIT": "string",
+          "FLR": "string",
+          "ROOM": "string",
+          "PLC": "string",
+          "PCN": "string",
+          "POBOX": "string",
+          "ADDCODE": "string",
+          "SEAT": "string",
+          "RD": "string",
+          "RDSEC": "string",
+          "RDBR": "string",
+          "RDSUBBR": "string",
+          "PRM": "string",
+          "POM": "string",
+          "usageRules": "string",
+          "method": "string",
+          "providedBy": "string"
+        },
+        "geoArea": {
+          "shape": "POINT",
+          "point": {
+            "lon": 180,
+            "lat": 90
+          }
+        },
+        "dcId": "string"
+      },
+      "serviceKpis": {
+        "maxReqRate": 0,
+        "maxRestime": 0,
+        "availability": 0,
+        "avalComp": "string",
+        "avalGraComp": "string",
+        "avalMem": "string",
+        "avalStor": "string",
+        "conBand": 0
+      },
+      "ueIpRange": {
+        "ueIpv4AddrRanges": [
+          {
+            "start": "198.51.100.1",
+            "end": "198.51.100.1"
+          }
+        ],
+        "ueIpv6AddrRanges": [
+          {
+            "start": "2001:db8:85a3::8a2e:370:7334",
+            "end": "2001:db8:85a3::8a2e:370:7334"
+          }
+        ]
+      }
+    }
+  ],
+  "description": "string",
+  "supportedFeatures": "string",
+  "shareableInfo": {
+    "isShareable": true,
+    "capifProvDoms": [
+      "string"
+    ]
+  },
+  "serviceAPICategory": "string",
+  "apiSuppFeats": "string",
+  "pubApiPath": {
+    "ccfIds": [
+      "string"
+    ]
+  },
+  "ccfId": "string"
+}

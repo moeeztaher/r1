@@ -120,3 +120,15 @@ type ProblemDetails struct {
     } `json:"invalidParams"`
     SupportedFeatures string `json:"supportedFeatures"`
 }
+
+type ServiceInfo struct {
+    Name    string `json:"name"`
+    Version string `json:"version"`
+}
+
+type YamlInfo struct {
+    Info struct {
+        Title   string `yaml:"title"`
+        Version string `yaml:"version"`
+    } `yaml:"info"`
+}
