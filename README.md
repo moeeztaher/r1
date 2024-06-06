@@ -11,4 +11,4 @@ The R1 interface is a crucial component in O-RAN architecture, facilitating comm
 To use this implementation, you need to have Go installed on your system.
 
 ```shell
-go get github.com/your_username/r1-interface
+go get github.com/moeeztaher/r1
