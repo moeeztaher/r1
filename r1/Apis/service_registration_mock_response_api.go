@@ -126,9 +126,9 @@ type AefProfileMock struct {
     SecurityMethods       []string              `json:"securityMethods"`
     DomainName            string                `json:"domainName"`
     InterfaceDescriptions []InterfaceDescription `json:"interfaceDescriptions"`
-    AefLocation           AefLocation           `json:"aefLocation"`
-    ServiceKpis           ServiceKpis           `json:"serviceKpis"`
-    UeIpRange             UeIpRange             `json:"ueIpRange"`
+    AefLocation           AEFLocation           `json:"aefLocation"`
+    ServiceKpis           ServiceKPIs           `json:"serviceKpis"`
+    UeIpRange             UEIPRange             `json:"ueIpRange"`
 }
 
 type ShareableInfoMock struct {
@@ -143,8 +143,8 @@ type PubApiPathMock struct {
 type ServiceInfoMock struct {
     ApiName          string          `json:"apiName"`
     ApiId            string          `json:"apiId"`
-    ApiStatus        ApiStatus       `json:"apiStatus"`
-    AefProfiles      []AefProfile    `json:"aefProfiles"`
+    ApiStatus        APIStatus       `json:"apiStatus"`
+    AefProfiles      []AEFProfile    `json:"aefProfiles"`
     Description      string          `json:"description"`
     SupportedFeatures string         `json:"supportedFeatures"`
     ShareableInfo    ShareableInfoMock   `json:"shareableInfo"`
