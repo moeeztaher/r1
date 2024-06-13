@@ -1,0 +1,4 @@
+POST localhost:8080/testrapp1/service-apis
+Content-Type: application/json
+
+{ "apiName" : "test" }
