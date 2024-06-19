@@ -7,11 +7,13 @@ import (
     "fmt"
 
     "github.com/gorilla/mux"
-    "r1/r1/Server/Handlers"
-
+    "r1/r1/Server/Handlers/registrationServiceHandler"
+    "r1/r1/Server/Handlers/errorHandler"
     "go.mongodb.org/mongo-driver/mongo"
     "go.mongodb.org/mongo-driver/mongo/options"
     "go.mongodb.org/mongo-driver/mongo/readpref"
+
+    "github.com/go-redis/redis/v8"
 )
 
 func main() {
@@ -36,12 +38,19 @@ func main() {
     collection := client.Database("test2").Collection("PublishAPITest")
 
     r := mux.NewRouter()
-    r.HandleFunc("/service-apis", Handlers.PublishServiceHandler1(collection)).Methods("POST")
-    r.HandleFunc("/service-apis", Handlers.GetServiceAPIsHandler(collection)).Methods("GET")
-    r.HandleFunc("/service-apis/{serviceApiId}", Handlers.GetSpecificServiceAPIHandler(collection)).Methods("GET")
-    r.HandleFunc("/service-apis/{serviceApiId}", Handlers.UpdateServiceAPIHandler(collection)).Methods("PUT")
-    r.HandleFunc("/service-apis/{serviceApiId}", Handlers.DeleteServiceAPIHandler(collection)).Methods("DELETE")
-    r.HandleFunc("/service-apis/{serviceApiId}", Handlers.PatchServiceAPIHandler(collection)).Methods("PATCH")
+
+    r.Use(ErrorHandler.CheckContentType)
+    r.Use(ErrorHandler.CheckContentLength)
+    r.Use(ErrorHandler.CheckPayloadSize)
+
+    r.HandleFunc("/service-apis", RegistrationServiceHandlers.PublishServiceHandler1(collection)).Methods("POST")
+    r.HandleFunc("/service-apis", RegistrationServiceHandlers.GetServiceAPIsHandler(collection)).Methods("GET")
+    r.HandleFunc("/service-apis/{serviceApiId}", RegistrationServiceHandlers.GetSpecificServiceAPIHandler(collection)).Methods("GET")
+    r.HandleFunc("/service-apis/{serviceApiId}", RegistrationServiceHandlers.UpdateServiceAPIHandler(collection)).Methods("PUT")
+    r.HandleFunc("/service-apis/{serviceApiId}", RegistrationServiceHandlers.DeleteServiceAPIHandler(collection)).Methods("DELETE")
+    r.HandleFunc("/service-apis/{serviceApiId}", RegistrationServiceHandlers.PatchServiceAPIHandler(collection)).Methods("PATCH")
+
+    r.NotFoundHandler = http.HandlerFunc(ErrorHandler.NotFoundHandler)
 
     log.Println("Starting server on :8080")
     log.Fatal(http.ListenAndServe(":8080", r))

@@ -1,15 +1,10 @@
-package Handlers
+package RegistrationServiceHandlers
 
 import (
     "encoding/json"
     "net/http"
     "fmt"
-    //"github.com/gorilla/mux"
     "r1/r1/Apis"
-    //"io/ioutil"
-    //"os"
-    //"path/filepath"
-    //"log"
     "context"
 
     "go.mongodb.org/mongo-driver/mongo"
@@ -17,46 +12,8 @@ import (
 
     "github.com/gorilla/mux"
 
+    "./Handlers/errorHandler"
 )
-
-// For unauthorized access (401)
-func checkAuthorization(r *http.Request) bool {
-    // Implement authorization logic here
-    // Handle MongoDB insertion error (HTTP 500)
-    errorResponse := Apis.ErrorResponse{
-        Type:             "https://example.com/errors/mongodb-insertion",
-        Title:            "MongoDB Insertion Error",
-        Status:           http.StatusUnauthorized,
-        Detail:           "Unauthorized Access",
-        Cause:            "err.Error()",
-        SupportedFeatures: "string",
-    }
-
-    writeErrorResponse(w, errorResponse, http.StatusUnauthorized)
-    return true
-}
-
-// For forbidden access (403)
-func checkPermissions(r *http.Request) bool {
-    // Implement permission check logic here
-    errorResponse := Apis.ErrorResponse{
-        Type:             "https://example.com/errors/mongodb-insertion",
-        Title:            "MongoDB Insertion Error",
-        Status:           http.StatusForbidden,
-        Detail:           "Wrong permissions, forbidden access",
-        Cause:            "err.Error()",
-        SupportedFeatures: "string",
-    }
-    writeErrorResponse(w, errorResponse, http.StatusForbidden)
-    return true
-}
-
-// Helper function to write error response
-func writeErrorResponse(w http.ResponseWriter, errResp Apis.ErrorResponse, statusCode int) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-	json.NewEncoder(w).Encode(errResp)
-}
 
 /*func PublishServiceHandler(w http.ResponseWriter, r *http.Request) {
     var request Apis.PublishServiceRequest
@@ -82,12 +39,12 @@ func writeErrorResponse(w http.ResponseWriter, errResp Apis.ErrorResponse, statu
 
 func PublishServiceHandler1(collection *mongo.Collection) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-
-        if !checkAuthorization(r) {
+        // HTTP 401
+        if !ErrorHandler.checkAuthorization(w,r) {
             return
         }
-
-        if !checkPermissions(r) {
+        // HTTP 403
+        if !ErrorHandler.checkPermissions(w,r) {
             return
         }
 
@@ -106,7 +63,7 @@ func PublishServiceHandler1(collection *mongo.Collection) http.HandlerFunc {
 				Cause:            err.Error(),
 				SupportedFeatures: "string",
 			}
-			writeErrorResponse(w, errorResponse, http.StatusBadRequest)
+			ErrorHandler.writeErrorResponse(w, errorResponse, http.StatusBadRequest)
             return
         }
 
@@ -122,11 +79,11 @@ func PublishServiceHandler1(collection *mongo.Collection) http.HandlerFunc {
 				Cause:            err.Error(),
 				SupportedFeatures: "string",
 			}
-			writeErrorResponse(w, errorResponse, http.StatusInternalServerError)
+			ErrorHandler.writeErrorResponse(w, errorResponse, http.StatusInternalServerError)
             return
         }
 
-        // Respond with a success message
+        // Respond with a success message HTTP 201
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusCreated)
         json.NewEncoder(w).Encode(map[string]string{"message": "Service API published successfully"})
