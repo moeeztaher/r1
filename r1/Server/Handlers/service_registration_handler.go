@@ -19,6 +19,45 @@ import (
 
 )
 
+// For unauthorized access (401)
+func checkAuthorization(r *http.Request) bool {
+    // Implement authorization logic here
+    // Handle MongoDB insertion error (HTTP 500)
+    errorResponse := Apis.ErrorResponse{
+        Type:             "https://example.com/errors/mongodb-insertion",
+        Title:            "MongoDB Insertion Error",
+        Status:           http.StatusUnauthorized,
+        Detail:           "Unauthorized Access",
+        Cause:            "err.Error()",
+        SupportedFeatures: "string",
+    }
+
+    writeErrorResponse(w, errorResponse, http.StatusUnauthorized)
+    return true
+}
+
+// For forbidden access (403)
+func checkPermissions(r *http.Request) bool {
+    // Implement permission check logic here
+    errorResponse := Apis.ErrorResponse{
+        Type:             "https://example.com/errors/mongodb-insertion",
+        Title:            "MongoDB Insertion Error",
+        Status:           http.StatusForbidden,
+        Detail:           "Wrong permissions, forbidden access",
+        Cause:            "err.Error()",
+        SupportedFeatures: "string",
+    }
+    writeErrorResponse(w, errorResponse, http.StatusForbidden)
+    return true
+}
+
+// Helper function to write error response
+func writeErrorResponse(w http.ResponseWriter, errResp Apis.ErrorResponse, statusCode int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(errResp)
+}
+
 /*func PublishServiceHandler(w http.ResponseWriter, r *http.Request) {
     var request Apis.PublishServiceRequest
 
@@ -43,20 +82,47 @@ import (
 
 func PublishServiceHandler1(collection *mongo.Collection) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
+
+        if !checkAuthorization(r) {
+            return
+        }
+
+        if !checkPermissions(r) {
+            return
+        }
+
         var api Apis.PublishServiceAPI
         //apfId := params["apfId"]
 
         // Parse the request body into the ServiceAPI struct
         err := json.NewDecoder(r.Body).Decode(&api)
         if err != nil {
-            http.Error(w, err.Error(), http.StatusBadRequest)
+            // Handle JSON decoding error (HTTP 400)
+			errorResponse := Apis.ErrorResponse{
+				Type:             "https://example.com/errors/json-decoding",
+				Title:            "JSON Decoding Error",
+				Status:           http.StatusBadRequest,
+				Detail:           "Failed to decode JSON body",
+				Cause:            err.Error(),
+				SupportedFeatures: "string",
+			}
+			writeErrorResponse(w, errorResponse, http.StatusBadRequest)
             return
         }
 
         // Insert the received API into the MongoDB collection
         _, err = collection.InsertOne(context.TODO(), api)
         if err != nil {
-            http.Error(w, "Failed to insert document into MongoDB", http.StatusInternalServerError)
+            // Handle MongoDB insertion error (HTTP 500)
+			errorResponse := Apis.ErrorResponse{
+				Type:             "https://example.com/errors/mongodb-insertion",
+				Title:            "MongoDB Insertion Error",
+				Status:           http.StatusInternalServerError,
+				Detail:           "Failed to insert document into MongoDB",
+				Cause:            err.Error(),
+				SupportedFeatures: "string",
+			}
+			writeErrorResponse(w, errorResponse, http.StatusInternalServerError)
             return
         }
 

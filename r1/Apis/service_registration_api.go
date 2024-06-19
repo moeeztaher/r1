@@ -261,6 +261,21 @@ type PublishServiceAPI struct {
     ApiProvName          string `json:"apiProvName"`
 }
 
+type PutRequest struct {
+    ApiName           string        `json:"apiName"`
+    ApiId             string        `json:"apiId"`
+    ApiStatus         APIStatus     `json:"apiStatus"`
+    AefProfiles       []AEFProfile  `json:"aefProfiles"`
+    Description       string        `json:"description"`
+    SupportedFeatures string        `json:"supportedFeatures"`
+    ShareableInfo     ShareableInfo `json:"shareableInfo"`
+    ServiceAPICategory string       `json:"serviceAPICategory"`
+    ApiSuppFeats      string        `json:"apiSuppFeats"`
+    PubApiPath        PubAPIPath    `json:"pubApiPath"`
+    CcfId             string        `json:"ccfId"`
+    ApiProvName       string        `json:"apiProvName"`
+}
+
 // TO GET API FROM DB
 type GetServiceAPI struct {
     APIName         string        `json:"apiName"`
@@ -336,7 +351,38 @@ type AEFLocation struct {
 type CivicAddr struct {
     Country  string `json:"country"`
     A1       string `json:"A1"`
-    // Add remaining fields as required
+    A2        string `json:"A2"`
+    A3        string `json:"A3"`
+    A4        string `json:"A4"`
+    A5        string `json:"A5"`
+    A6        string `json:"A6"`
+    PRD       string `json:"PRD"`
+    POD       string `json:"POD"`
+    STS       string `json:"STS"`
+    HNO       string `json:"HNO"`
+    HNS       string `json:"HNS"`
+    LMK       string `json:"LMK"`
+    LOC       string `json:"LOC"`
+    NAM       string `json:"NAM"`
+    PC        string `json:"PC"`
+    BLD       string `json:"BLD"`
+    UNIT      string `json:"UNIT"`
+    FLR       string `json:"FLR"`
+    ROOM      string `json:"ROOM"`
+    PLC       string `json:"PLC"`
+    PCN       string `json:"PCN"`
+    POBOX     string `json:"POBOX"`
+    ADDCODE   string `json:"ADDCODE"`
+    SEAT      string `json:"SEAT"`
+    RD        string `json:"RD"`
+    RDSEC     string `json:"RDSEC"`
+    RDBR      string `json:"RDBR"`
+    RDSUBBR   string `json:"RDSUBBR"`
+    PRM       string `json:"PRM"`
+    POM       string `json:"POM"`
+    UsageRules string `json:"usageRules"`
+    Method    string `json:"method"`
+    ProvidedBy string `json:"providedBy"`
 }
 
 type GeoArea struct {
@@ -354,7 +400,10 @@ type ServiceKPIs struct {
     MaxRestime  int    `json:"maxRestime"`
     Availability int   `json:"availability"`
     AvalComp    string `json:"avalComp"`
-    // Add remaining fields as required
+    AvalGraComp   string `json:"avalGraComp"`
+    AvalMem       string `json:"avalMem"`
+    AvalStor      string `json:"avalStor"`
+    ConBand       int    `json:"conBand"`
 }
 
 type UEIPRange struct {
@@ -388,7 +437,14 @@ type ApiData struct {
     ApiId       string       `json:"apiId"`
     ApiStatus   APIStatus    `json:"apiStatus"`
     AefProfiles []AefProfiles `json:"aefProfiles"`
-    // Add other fields as needed
+    Description     string         `json:"description"`
+    SupportedFeatures string       `json:"supportedFeatures"`
+    ShareableInfo   ShareableInfo  `json:"shareableInfo"`
+    ServiceAPICategory string      `json:"serviceAPICategory"`
+    APISuppFeats    string         `json:"apiSuppFeats"`
+    PubAPIPath      PubAPIPath     `json:"pubApiPath"`
+    CCFID           string         `json:"ccfId"`
+    APIProvName     string         `json:"apiProvName"`
 }
 
 // Patch Request
@@ -402,4 +458,22 @@ type PatchRequest struct {
     APISuppFeats    *string          `json:"apiSuppFeats,omitempty"`
     PubAPIPath      *PubAPIPath      `json:"pubApiPath,omitempty"`
     CCFId           *string          `json:"ccfId,omitempty"`
+}
+
+
+// Error response structure for HTTP status codes 400, 401, 403, 404, 411, 413, 415, 429, 500, 503
+type ErrorResponse struct {
+	Type             string          `json:"type"`
+	Title            string          `json:"title"`
+	Status           int             `json:"status"`
+	Detail           string          `json:"detail"`
+	Instance         string          `json:"instance"`
+	Cause            string          `json:"cause"`
+	InvalidParams    []InvalidParams `json:"invalidParams,omitempty"`
+	SupportedFeatures string          `json:"supportedFeatures"`
+}
+
+type InvalidParams struct {
+	Param  string `json:"param"`
+	Reason string `json:"reason"`
 }
