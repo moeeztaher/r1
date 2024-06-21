@@ -12,7 +12,7 @@ import (
 
     "github.com/gorilla/mux"
 
-    "./Handlers/errorHandler"
+    "r1/r1/Server/Handlers/errorHandler"
 )
 
 /*func PublishServiceHandler(w http.ResponseWriter, r *http.Request) {
