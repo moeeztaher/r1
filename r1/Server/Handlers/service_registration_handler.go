@@ -50,7 +50,6 @@ func PublishServiceHandler(serviceCollection *mongo.Collection, rappCollection *
 			return
 		}
 
-		// Parse the request body into the ServiceAPI struct
 		err = json.NewDecoder(r.Body).Decode(&api)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -66,7 +65,6 @@ func PublishServiceHandler(serviceCollection *mongo.Collection, rappCollection *
 			api.APIID = uuid.New().String()
 		}
 
-		// Define the update operation using $push
 		rappUpdate := bson.D{
 			{"$push", bson.D{
 				{"authorized_services", api.APIID},
@@ -129,7 +127,6 @@ func GetServiceAPIsHandler(serviceCollection *mongo.Collection, rappCollection *
 
 		serviceFilter := bson.D{{"apiid", bson.D{{"$in", rapp.AuthorizedServices}}}}
 
-		// check if invokerId is present in the rapps collection
 		serviceCursor, err := serviceCollection.Find(context.TODO(), serviceFilter)
 		if err != nil {
 			http.Error(w, "Failed to retrieve documents from MongoDB", http.StatusInternalServerError)
@@ -137,7 +134,6 @@ func GetServiceAPIsHandler(serviceCollection *mongo.Collection, rappCollection *
 		}
 		defer serviceCursor.Close(context.TODO())
 
-		//Iterate through the cursor and decode each document into a ServiceAPI struct
 		for serviceCursor.Next(context.TODO()) {
 			var api Apis.GetServiceAPI
 			if err = serviceCursor.Decode(&api); err != nil {
@@ -147,13 +143,11 @@ func GetServiceAPIsHandler(serviceCollection *mongo.Collection, rappCollection *
 			serviceAPIs = append(serviceAPIs, api)
 		}
 
-		// Check for cursor errors
 		if err := serviceCursor.Err(); err != nil {
 			http.Error(w, "Cursor error", http.StatusInternalServerError)
 			return
 		}
 
-		// Respond with the retrieved service APIs
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(serviceAPIs)
 	}
@@ -167,7 +161,6 @@ func GetSpecificServiceAPIHandler(collection *mongo.Collection) http.HandlerFunc
 
 		var serviceAPI Apis.GetServiceAPI
 
-		// Find the document with the specified apfId and serviceApiId
 		filter := bson.M{"apiid": serviceApiId}
 		err := collection.FindOne(context.TODO(), filter).Decode(&serviceAPI)
 		if err != nil {
@@ -175,7 +168,6 @@ func GetSpecificServiceAPIHandler(collection *mongo.Collection) http.HandlerFunc
 			return
 		}
 
-		// Respond with the retrieved service API
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(serviceAPI)
 	}
@@ -232,7 +224,6 @@ func DeleteServiceAPIHandler(collection *mongo.Collection) http.HandlerFunc {
 	}
 }
 
-// Handler to update a specific service API
 func PatchServiceAPIHandler(collection *mongo.Collection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
