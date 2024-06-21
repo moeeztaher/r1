@@ -134,7 +134,6 @@ package Apis
     } `yaml:"info"`
 }*/
 
-// TO PUBLISH API TO DB
 type PublishServiceAPI struct {
 	APIName   string `json:"apiName" validate:"required"`
 	APIID     string `json:"apiId"`
@@ -261,7 +260,6 @@ type PublishServiceAPI struct {
 	ApiProvName string `json:"apiProvName"`
 }
 
-// TO GET API FROM DB
 type GetServiceAPI struct {
 	APIName        string        `json:"apiName"`
 	APIID          string        `json:"apiId"`
@@ -374,7 +372,6 @@ type PubAPIPath struct {
 	CCFIDs []string `json:"ccfIds"`
 }
 
-// Put API Struct
 
 type AefProfiles struct {
 	AefId string `json:"aefId"`
@@ -387,7 +384,6 @@ type ApiData struct {
 	AefProfiles []AefProfiles `json:"aefProfiles"`
 }
 
-// Patch Request
 
 type PatchRequest struct {
 	APIStatus       *APIStatus     `json:"apiStatus,omitempty"`
