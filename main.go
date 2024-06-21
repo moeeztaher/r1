@@ -3,13 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"log"
-	"net/http"
 	"r1/r1/Server/Handlers"
+	"r1/r1/Apis"
 )
 
 func main() {
@@ -30,21 +32,23 @@ func main() {
 
 	fmt.Println("Connected to MongoDB!")
 
+	// Initialize collections
 	serviceCollection := client.Database("test").Collection("services")
 	rappCollection := client.Database("test").Collection("rapps")
 
 	// Insert a few test rapps into the rapps collection
-	//newRapps := []interface{}{
-	//	Rapp{ApfId: "testrapp1", IsAuthorized: true, AuthorizedServices: []string{}},
-	//	Rapp{ApfId: "testrapp2", IsAuthorized: false, AuthorizedServices: []string{}},
-	//}
-	//_, err = rappCollection.InsertMany(context.TODO(), newRapps)
-	//if err != nil {
-	//	panic(err)
-	//}
+	newRapps := []interface{}{
+		Apis.Rapp{ApfId: "testrapp1", IsAuthorized: true, AuthorizedServices: []string{}},
+		Apis.Rapp{ApfId: "testrapp2", IsAuthorized: false, AuthorizedServices: []string{}},
+	}
+	_, err = rappCollection.InsertMany(context.TODO(), newRapps)
+	if err != nil {
+		panic(err)
+	}
 
+	// Set up routes
 	r := mux.NewRouter()
-	r.HandleFunc("/allServiceApis", Handlers.GetServiceAPIsHandler(serviceCollection, rappCollection)).Methods("GET")
+	r.HandleFunc("/allServiceAPIs", Handlers.ServiceDiscoveryHandler(serviceCollection)).Methods("GET")
 	r.HandleFunc("/{apfId}/service-apis", Handlers.PublishServiceHandler(serviceCollection, rappCollection)).Methods("POST")
 	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.GetSpecificServiceAPIHandler(serviceCollection)).Methods("GET")
 	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.UpdateServiceAPIHandler(serviceCollection)).Methods("PUT")

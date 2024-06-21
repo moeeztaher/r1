@@ -336,7 +336,6 @@ type AEFLocation struct {
 type CivicAddr struct {
 	Country string `json:"country"`
 	A1      string `json:"A1"`
-	// Add remaining fields as required
 }
 
 type GeoArea struct {
@@ -354,7 +353,6 @@ type ServiceKPIs struct {
 	MaxRestime   int    `json:"maxRestime"`
 	Availability int    `json:"availability"`
 	AvalComp     string `json:"avalComp"`
-	// Add remaining fields as required
 }
 
 type UEIPRange struct {
@@ -380,7 +378,6 @@ type PubAPIPath struct {
 
 type AefProfiles struct {
 	AefId string `json:"aefId"`
-	// Add other fields as needed
 }
 
 type ApiData struct {
@@ -388,7 +385,6 @@ type ApiData struct {
 	ApiId       string        `json:"apiId"`
 	ApiStatus   APIStatus     `json:"apiStatus"`
 	AefProfiles []AefProfiles `json:"aefProfiles"`
-	// Add other fields as needed
 }
 
 // Patch Request
