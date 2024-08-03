@@ -29,7 +29,6 @@ func CreateDataJobHandler(dataJobsCollection *mongo.Collection) http.HandlerFunc
 		dataJobID := uuid.New().String()
 		dataJobInfo.DataJobId = dataJobID
 
-		// Debugging output
 		fmt.Printf("Generated DataJobId: %s\n", dataJobID)
 		fmt.Printf("DataJobInfo: %+v\n", dataJobInfo)
 
@@ -85,10 +84,6 @@ func NotifyDataAvailabilityHandler(dataJobsCollection *mongo.Collection) http.Ha
 			return
 		}
 
-		// Assuming that the DataJobInfo document has a dataAvailabilityNotificationUri field
-		// which should be validated or updated based on your application's requirements
-
-		// Response as per the API specification
 		w.WriteHeader(http.StatusNoContent)
 	}
 }
