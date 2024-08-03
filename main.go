@@ -6,12 +6,13 @@ import (
 	"log"
 	"net/http"
 
+	"r1/r1/Apis"
+	"r1/r1/Server/Handlers"
+
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"r1/r1/Server/Handlers"
-	"r1/r1/Apis"
 )
 
 func main() {
@@ -33,6 +34,8 @@ func main() {
 	rappCollection := client.Database("test").Collection("rapps")
 	subscriptionsCollection := client.Database("test").Collection("subscriptions")
 	subscribersCollection := client.Database("test").Collection("subscribers")
+	dataTypeProdCapsCollection := client.Database("test").Collection("dataTypeProdCaps")
+	dataJobsCollection := client.Database("test").Collection("dataJobs")
 
 	// For testing purpose: insert a few test rapps into the rapps collection
 	newRapps := []interface{}{
@@ -56,7 +59,22 @@ func main() {
 	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.DeleteServiceAPIHandler(serviceCollection)).Methods("DELETE")
 	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.PatchServiceAPIHandler(serviceCollection)).Methods("PATCH")
 
-	
+	// Data registration API routes
+	r.HandleFunc("/rapps/{rAppId}/datatypeprodcaps", Handlers.RegisterDmeTypeProdCapHandler(rappCollection, dataTypeProdCapsCollection)).Methods("POST")
+	r.HandleFunc("/rapps/{rAppId}/datatypeprodcaps/{registrationId}", Handlers.DeregisterDmeTypeProdCapHandler(rappCollection, dataTypeProdCapsCollection)).Methods("DELETE")
+
+	r.HandleFunc("/datatypes", Handlers.GetAllDataTypesHandler(dataTypeProdCapsCollection)).Methods("GET")
+	r.HandleFunc("/datatypes/{dataTypeId}", Handlers.GetDataTypeByIdHandler(dataTypeProdCapsCollection)).Methods("GET")
+
+	// Data Access API routes
+	r.HandleFunc("/{consumerId}/dataJobs", Handlers.CreateDataJobHandler(dataJobsCollection)).Methods("POST")
+	r.HandleFunc("/{consumerId}/dataJobs/{dataJobId}", Handlers.DeleteDataJobHandler(dataJobsCollection)).Methods("DELETE")
+	r.HandleFunc("/notifyDataAvailability", Handlers.NotifyDataAvailabilityHandler(dataJobsCollection)).Methods("POST")
+
+	// Register the Push Data handler
+	r.HandleFunc("/api/v1/push-data", Handlers.PushDataHandler()).Methods("POST")
+	r.HandleFunc("/api/v1/pull-data", Handlers.PullDataHandler()).Methods("GET")
+
 	log.Println("Starting server on :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
 
