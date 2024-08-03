@@ -134,7 +134,6 @@ package Apis
     } `yaml:"info"`
 }*/
 
-// TO PUBLISH API TO DB
 type PublishServiceAPI struct {
 	APIName   string `json:"apiName" validate:"required"`
 	APIID     string `json:"apiId"`
@@ -261,7 +260,6 @@ type PublishServiceAPI struct {
 	ApiProvName string `json:"apiProvName"`
 }
 
-// TO GET API FROM DB
 type GetServiceAPI struct {
 	APIName        string        `json:"apiName"`
 	APIID          string        `json:"apiId"`
@@ -336,7 +334,6 @@ type AEFLocation struct {
 type CivicAddr struct {
 	Country string `json:"country"`
 	A1      string `json:"A1"`
-	// Add remaining fields as required
 }
 
 type GeoArea struct {
@@ -354,7 +351,6 @@ type ServiceKPIs struct {
 	MaxRestime   int    `json:"maxRestime"`
 	Availability int    `json:"availability"`
 	AvalComp     string `json:"avalComp"`
-	// Add remaining fields as required
 }
 
 type UEIPRange struct {
@@ -376,11 +372,9 @@ type PubAPIPath struct {
 	CCFIDs []string `json:"ccfIds"`
 }
 
-// Put API Struct
 
 type AefProfiles struct {
 	AefId string `json:"aefId"`
-	// Add other fields as needed
 }
 
 type ApiData struct {
@@ -388,10 +382,8 @@ type ApiData struct {
 	ApiId       string        `json:"apiId"`
 	ApiStatus   APIStatus     `json:"apiStatus"`
 	AefProfiles []AefProfiles `json:"aefProfiles"`
-	// Add other fields as needed
 }
 
-// Patch Request
 
 type PatchRequest struct {
 	APIStatus       *APIStatus     `json:"apiStatus,omitempty"`
