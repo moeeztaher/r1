@@ -52,7 +52,6 @@ func PushDataHandler() http.HandlerFunc {
 			return
 		}
 
-		// Success
 		w.WriteHeader(http.StatusNoContent)
 	}
 }
