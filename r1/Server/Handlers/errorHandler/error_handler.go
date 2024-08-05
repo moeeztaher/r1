@@ -24,9 +24,16 @@ var ctx = context.Background()
 var client *mongo.Client
 var userCollection *mongo.Collection
 
+type Permission struct {
+	Read      bool `bson:"read"`
+	Write     bool `bson:"write"`
+	ReadWrite bool `bson:"read_write"`
+}
+
 type User struct {
-	Username string `bson:"username"`
-	Password string `bson:"password"` // This should be hashed
+	Username    string     `bson:"username"`
+	Password    string     `bson:"password"` // This should be hashed
+	Permissions Permission `bson:"permissions"`
 }
 
 // Initialize Redis client
@@ -45,6 +52,7 @@ const (
 
 const MaxPayloadSize = 1 * 1024 * 1024 // 1 MB
 
+// For unauthorized access (401)
 func CheckAuthorization(w http.ResponseWriter, r *http.Request) bool {
 
 	var err error
@@ -107,36 +115,85 @@ func CheckAuthorization(w http.ResponseWriter, r *http.Request) bool {
 	return true
 }
 
-// For unauthorized access (401)
-//func CheckAuthorization(w http.ResponseWriter, r *http.Request) bool {
-// Implement authorization logic here
-// Handle MongoDB authorization error (HTTP 500)
+// For forbidden access (403)
+//func CheckPermissions(w http.ResponseWriter, r *http.Request) bool {
+// Implement permission check logic here
 //	errorResponse := Apis.ErrorResponse{
-//		Type:              "https://example.com/errors/mongodb-authorization",
-//		Title:             "MongoDB Authorization Error",
-//		Status:            http.StatusUnauthorized,
-//		Detail:            "Unauthorized Access",
+//		Type:              "https://example.com/errors/mongodb-permission",
+//		Title:             "MongoDB Permission Error",
+//		Status:            http.StatusForbidden,
+//		Detail:            "Wrong permissions, forbidden access",
 //		Cause:             "err.Error()",
 //		SupportedFeatures: "string",
 //	}
-
-//	WriteErrorResponse(w, errorResponse, http.StatusUnauthorized)
+//	WriteErrorResponse(w, errorResponse, http.StatusForbidden)
 //	return true
-//}
+///}
 
-// For forbidden access (403)
 func CheckPermissions(w http.ResponseWriter, r *http.Request) bool {
-	// Implement permission check logic here
-	errorResponse := Apis.ErrorResponse{
-		Type:              "https://example.com/errors/mongodb-permission",
-		Title:             "MongoDB Permission Error",
-		Status:            http.StatusForbidden,
-		Detail:            "Wrong permissions, forbidden access",
-		Cause:             "err.Error()",
-		SupportedFeatures: "string",
+	// Example: Extract username from request headers
+	username := r.Header.Get("Username")
+	operation := r.Header.Get("Operation") // Example: "read", "write", "read_write"
+
+	if username == "" || operation == "" {
+		// Missing credentials or operation
+		WriteErrorResponse(w, Apis.ErrorResponse{
+			Type:              "https://example.com/errors/missing-credentials",
+			Title:             "Missing Credentials or Operation",
+			Status:            http.StatusForbidden,
+			Detail:            "Username or Operation missing",
+			Cause:             "Credentials or operation are missing in the request",
+			SupportedFeatures: "string",
+		}, http.StatusForbidden)
+		return false
 	}
-	WriteErrorResponse(w, errorResponse, http.StatusForbidden)
+
+	// Query MongoDB for user
+	var user User
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
+	if err != nil {
+		// User not found or other error
+		WriteErrorResponse(w, Apis.ErrorResponse{
+			Type:              "https://example.com/errors/user-not-found",
+			Title:             "User Not Found",
+			Status:            http.StatusForbidden,
+			Detail:            "User not found or permissions not set",
+			Cause:             "User not found",
+			SupportedFeatures: "string",
+		}, http.StatusForbidden)
+		return false
+	}
+
+	// Check permissions
+	if !hasPermission(user.Permissions, operation) {
+		// User does not have the required permissions
+		WriteErrorResponse(w, Apis.ErrorResponse{
+			Type:              "https://example.com/errors/mongodb-permission",
+			Title:             "MongoDB Permission Error",
+			Status:            http.StatusForbidden,
+			Detail:            "Wrong permissions, forbidden access",
+			Cause:             "User does not have the required permissions",
+			SupportedFeatures: "string",
+		}, http.StatusForbidden)
+		return false
+	}
+
+	// Permissions check successful
 	return true
+}
+
+// hasPermission checks if the user has the required permissions for the operation
+func hasPermission(permissions Permission, operation string) bool {
+	switch operation {
+	case "read":
+		return permissions.Read || permissions.ReadWrite
+	case "write":
+		return permissions.Write || permissions.ReadWrite
+	case "read_write":
+		return permissions.ReadWrite
+	default:
+		return false
+	}
 }
 
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
