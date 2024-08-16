@@ -54,7 +54,7 @@ func main() {
 	r.HandleFunc("/{apfId}/service-apis", Handlers.PublishServiceHandler(serviceCollection, rappCollection)).Methods("POST")
 	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.GetSpecificServiceAPIHandler(serviceCollection)).Methods("GET")
 	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.UpdateServiceAPIHandler(serviceCollection, rappCollection)).Methods("PUT")
-	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.DeleteServiceAPIHandler(serviceCollection)).Methods("DELETE")
+	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.DeleteServiceAPIHandler(serviceCollection, rappCollection)).Methods("DELETE")
 	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.PatchServiceAPIHandler(serviceCollection, rappCollection)).Methods("PATCH")
 
 	// Data registration API routes

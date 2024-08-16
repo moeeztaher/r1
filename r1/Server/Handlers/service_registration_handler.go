@@ -279,14 +279,15 @@ func PatchServiceAPIHandler(serviceCollection *mongo.Collection, rappCollection 
 	}
 }
 
-func DeleteServiceAPIHandler(collection *mongo.Collection) http.HandlerFunc {
+func DeleteServiceAPIHandler(serviceCollection *mongo.Collection, rappCollection *mongo.Collection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		serviceApiId := vars["serviceApiId"]
+		rappId := vars["apfId"]
 
-		filter := bson.M{"apiid": serviceApiId}
-
-		result, err := collection.DeleteOne(context.Background(), filter)
+		serviceFilter := bson.M{"apiId": serviceApiId}
+		// TODO: add transaction to make these operations atomic
+		result, err := serviceCollection.DeleteOne(context.Background(), serviceFilter)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -297,7 +298,20 @@ func DeleteServiceAPIHandler(collection *mongo.Collection) http.HandlerFunc {
 			return
 		}
 
+		rappFilter := bson.M{"apf_id": rappId, "authorized_services": serviceApiId}
+		update := bson.M{"$pull": bson.M{"authorized_services": serviceApiId}}
+
+		_, err = rappCollection.UpdateOne(context.TODO(), rappFilter, update)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		response := map[string]string{"message": fmt.Sprintf("Service API %s deleted", serviceApiId)}
-		json.NewEncoder(w).Encode(response)
+		err = json.NewEncoder(w).Encode(response)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 }
