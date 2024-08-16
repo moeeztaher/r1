@@ -173,13 +173,22 @@ func GetSpecificServiceAPIHandler(collection *mongo.Collection) http.HandlerFunc
 	}
 }
 
-func UpdateServiceAPIHandler(collection *mongo.Collection) http.HandlerFunc {
+func UpdateServiceAPIHandler(serviceCollection *mongo.Collection, rappCollection *mongo.Collection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
+		apfId := vars["apfId"]
 		serviceApiId := vars["serviceApiId"]
 
+		rappFilter := bson.D{{"apf_id", apfId}}
+		rappCursor, err := rappCollection.Find(context.TODO(), rappFilter)
+		if err != nil {
+			http.Error(w, "Failed to retrieve documents from MongoDB", http.StatusInternalServerError)
+			return
+		}
+		defer rappCursor.Close(context.TODO())
+
 		var apiData Apis.ApiData
-		err := json.NewDecoder(r.Body).Decode(&apiData)
+		err = json.NewDecoder(r.Body).Decode(&apiData)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -190,7 +199,7 @@ func UpdateServiceAPIHandler(collection *mongo.Collection) http.HandlerFunc {
 			"$set": apiData,
 		}
 
-		_, err = collection.UpdateOne(context.Background(), filter, update)
+		_, err = serviceCollection.UpdateOne(context.Background(), filter, update)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
