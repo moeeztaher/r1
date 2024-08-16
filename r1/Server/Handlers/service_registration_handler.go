@@ -135,7 +135,6 @@ func GetServiceAPIsHandler(serviceCollection *mongo.Collection, rappCollection *
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
-		fmt.Println(rapp)
 
 		serviceFilter := bson.D{{"apiid", bson.D{{"$in", rapp.AuthorizedServices}}}}
 
@@ -260,9 +259,8 @@ func PatchServiceAPIHandler(serviceCollection *mongo.Collection, rappCollection 
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		fmt.Println(patchReq)
 
-		filter := bson.M{"apiid": serviceApiId}
+		filter := bson.M{"apiId": serviceApiId}
 
 		update := bson.M{"$set": patchReq}
 		result, err := serviceCollection.UpdateOne(context.Background(), filter, update)

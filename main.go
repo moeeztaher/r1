@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"r1/r1/Apis"
-
 	"r1/r1/Server/Handlers"
 
 	"github.com/gorilla/mux"
@@ -38,14 +36,14 @@ func main() {
 	dataJobsCollection := client.Database("test").Collection("dataJobs")
 
 	//For testing purpose: insert a few test rapps into the rapps collection
-	newRapps := []interface{}{
-		Apis.Rapp{ApfId: "testrapp1", IsAuthorized: true, AuthorizedServices: []string{}},
-		Apis.Rapp{ApfId: "testrapp2", IsAuthorized: false, AuthorizedServices: []string{}},
-	}
-	_, err = rappCollection.InsertMany(context.TODO(), newRapps)
-	if err != nil {
-		panic(err)
-	}
+	//newRapps := []interface{}{
+	//	Apis.Rapp{ApfId: "testrapp1", IsAuthorized: true, AuthorizedServices: []string{}},
+	//	Apis.Rapp{ApfId: "testrapp2", IsAuthorized: false, AuthorizedServices: []string{}},
+	//}
+	//_, err = rappCollection.InsertMany(context.TODO(), newRapps)
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	r := mux.NewRouter()
 	r.HandleFunc("/allServiceAPIs", Handlers.ServiceDiscoveryHandler(serviceCollection)).Methods("GET")
