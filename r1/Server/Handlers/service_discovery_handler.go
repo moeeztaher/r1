@@ -4,11 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"time"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"net/http"
 )
 
 var serviceAPIsCollection *mongo.Collection
@@ -17,124 +15,74 @@ func InitServiceAPIsCollection(collection *mongo.Collection) {
 	serviceAPIsCollection = collection
 }
 
-func ServiceDiscoveryHandler(collection *mongo.Collection) http.HandlerFunc {
+func ServiceDiscoveryHandler(serviceCollection *mongo.Collection, rappCollection *mongo.Collection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := r.URL.Query()
-		filter := bson.M{}
+		rappFilter := bson.M{}
+		serviceFilter := bson.M{}
 
 		if apiInvokerID := params.Get("api-invoker-id"); apiInvokerID != "" {
-			filter["apiid"] = apiInvokerID
+			rappFilter["apf_id"] = apiInvokerID
+		} else {
+			http.Error(w, "The api-invoker-id parameter is required.", http.StatusInternalServerError)
+			return
 		}
 
+		// TODO: replace with FindOne
+		rappCursor, findErr := rappCollection.Find(context.TODO(), rappFilter)
+		if findErr != nil {
+			http.Error(w, findErr.Error(), http.StatusInternalServerError)
+		}
+		if !rappCursor.TryNext(context.TODO()) {
+			http.Error(w, fmt.Sprintf("The specified rapp: %v does not exist.", rappFilter["apf_id"]), http.StatusNotFound)
+			return
+		}
+
+		var results []bson.M
+		if err := rappCursor.All(context.TODO(), &results); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		serviceFilter["apiId"] = bson.M{"$in": results[0]["authorized_services"]}
 		if apiName := params.Get("api-name"); apiName != "" {
-			filter["apiname"] = apiName
+			serviceFilter["apiName"] = apiName
 		}
 
-		if apiVersion := params.Get("api-version"); apiVersion != "" {
-			filter["aefprofiles.versions.apiversion"] = apiVersion
-		}
+		//if apiVersion := params.Get("api-version"); apiVersion != "" {
+		//	filter["aefprofiles.versions.apiversion"] = apiVersion
+		//}
 
-		if commType := params.Get("comm-type"); commType != "" {
-			filter["commtype"] = commType
-		}
-
-		if protocol := params.Get("protocol"); protocol != "" {
-			filter["protocol"] = protocol
-		}
-
-		if aefID := params.Get("aef-id"); aefID != "" {
-			filter["apistatus.aefids"] = aefID
-		}
-
-		if dataFormat := params.Get("data-format"); dataFormat != "" {
-			filter["description"] = dataFormat
-		}
-
-		if apiCat := params.Get("api-cat"); apiCat != "" {
-			filter["serviceapicategory"] = apiCat
-		}
-
-		if reqApiProvName := params.Get("req-api-prov-name"); reqApiProvName != "" {
-			filter["apiprovname"] = reqApiProvName
-		}
-
-		if supportedFeatures := params.Get("supported-features"); supportedFeatures != "" {
-			filter["supportedfeatures"] = supportedFeatures
-		}
-
-		if apiSupportedFeatures := params.Get("api-supported-features"); apiSupportedFeatures != "" {
-			filter["apisuppfeats"] = apiSupportedFeatures
-		}
-
-		if ueIPAddr := params.Get("ue-ip-addr"); ueIPAddr != "" {
-			filter["ueipaddr.ipv4Addr"] = ueIPAddr
-		}
-
-		if maxReqRate := params.Get("service-kpis.maxReqRate"); maxReqRate != "" {
-			filter["servicekpi.maxReqRate"] = maxReqRate
-		}
-		if maxResTime := params.Get("service-kpis.maxRestime"); maxResTime != "" {
-			filter["servicekpi.maxRestime"] = maxResTime
-		}
-		if availability := params.Get("service-kpis.availability"); availability != "" {
-			filter["servicekpi.availability"] = availability
-		}
-		if avalComp := params.Get("service-kpis.avalComp"); avalComp != "" {
-			filter["servicekpi.avalComp"] = avalComp
-		}
-		if avalGraComp := params.Get("service-kpis.avalGraComp"); avalGraComp != "" {
-			filter["servicekpi.avalGraComp"] = avalGraComp
-		}
-		if avalMem := params.Get("service-kpis.avalMem"); avalMem != "" {
-			filter["servicekpi.avalMem"] = avalMem
-		}
-		if avalStor := params.Get("service-kpis.avalStor"); avalStor != "" {
-			filter["servicekpi.avalStor"] = avalStor
-		}
-		if conBand := params.Get("service-kpis.conBand"); conBand != "" {
-			filter["servicekpi.conBand"] = conBand
-		}
-
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-
-		cur, err := collection.Find(ctx, filter)
+		serviceCursor, err := serviceCollection.Find(context.TODO(), serviceFilter)
 		if err != nil {
-			handleError(w, http.StatusInternalServerError, "Error finding service APIs", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		defer cur.Close(ctx)
+		defer serviceCursor.Close(context.TODO())
 
-		var serviceAPIs []map[string]interface{}
-
-		for cur.Next(ctx) {
-			var result map[string]interface{}
-			err := cur.Decode(&result)
-			if err != nil {
-				handleError(w, http.StatusInternalServerError, "Error decoding service API", err)
-				return
-			}
-			serviceAPIs = append(serviceAPIs, result)
-		}
-
-		if err := cur.Err(); err != nil {
-			handleError(w, http.StatusInternalServerError, "Error iterating through service APIs", err)
+		// Check if any services were found
+		if !serviceCursor.TryNext(context.TODO()) {
+			http.Error(w, "No documents found", http.StatusNotFound)
 			return
 		}
 
-		jsonBytes, err := json.Marshal(serviceAPIs)
-		if err != nil {
-			handleError(w, http.StatusInternalServerError, "Error encoding service APIs to JSON", err)
+		// Process the documents
+		var serviceResults []bson.M
+		if err := serviceCursor.All(context.TODO(), &serviceResults); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write(jsonBytes)
+		respErr := json.NewEncoder(w).Encode(serviceResults)
+		if respErr != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 	}
 }
-
-
 
 func handleError(w http.ResponseWriter, statusCode int, message string, err error) {
 	w.Header().Set("Content-Type", "application/json")
@@ -142,4 +90,3 @@ func handleError(w http.ResponseWriter, statusCode int, message string, err erro
 	errorMessage := fmt.Sprintf(`{"error": "%s", "message": "%s"}`, message, err.Error())
 	w.Write([]byte(errorMessage))
 }
-

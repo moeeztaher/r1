@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"r1/r1/Apis"
 	"r1/r1/Server/Handlers"
 
 	"github.com/gorilla/mux"
@@ -35,18 +36,18 @@ func main() {
 	dataTypeProdCapsCollection := client.Database("test").Collection("dataTypeProdCaps")
 	dataJobsCollection := client.Database("test").Collection("dataJobs")
 
-	//For testing purpose: insert a few test rapps into the rapps collection
-	//newRapps := []interface{}{
-	//	Apis.Rapp{ApfId: "testrapp1", IsAuthorized: true, AuthorizedServices: []string{}},
-	//	Apis.Rapp{ApfId: "testrapp2", IsAuthorized: false, AuthorizedServices: []string{}},
-	//}
-	//_, err = rappCollection.InsertMany(context.TODO(), newRapps)
-	//if err != nil {
-	//	panic(err)
-	//}
+	//For testing purpose: insert a few documents into the rapps collection
+	newRapps := []interface{}{
+		Apis.Rapp{ApfId: "testrapp1", IsAuthorized: true, AuthorizedServices: []string{}},
+		Apis.Rapp{ApfId: "testrapp2", IsAuthorized: false, AuthorizedServices: []string{}},
+	}
+	_, err = rappCollection.InsertMany(context.TODO(), newRapps)
+	if err != nil {
+		panic(err)
+	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/allServiceAPIs", Handlers.ServiceDiscoveryHandler(serviceCollection)).Methods("GET")
+	r.HandleFunc("/allServiceAPIs", Handlers.ServiceDiscoveryHandler(serviceCollection, rappCollection)).Methods("GET")
 	r.HandleFunc("/{subscriberId}/subscriptions", Handlers.CreateSubscriptionHandler(subscriptionsCollection, subscribersCollection)).Methods("POST")
 	r.HandleFunc("/{subscriberId}/subscriptions/{subscriptionId}", Handlers.DeleteSubscriptionHandler(subscriptionsCollection, subscribersCollection)).Methods("DELETE")
 	r.HandleFunc("/{subscriberId}/subscriptions/{subscriptionId}", Handlers.UpdateSubscriptionHandler(subscriptionsCollection, subscribersCollection)).Methods("PUT")
