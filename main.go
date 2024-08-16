@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"r1/r1/Apis"
 
 	"r1/r1/Server/Handlers"
 
@@ -36,15 +37,15 @@ func main() {
 	dataTypeProdCapsCollection := client.Database("test").Collection("dataTypeProdCaps")
 	dataJobsCollection := client.Database("test").Collection("dataJobs")
 
-	// For testing purpose: insert a few test rapps into the rapps collection
-	//newRapps := []interface{}{
-	//	Apis.Rapp{ApfId: "testrapp1", IsAuthorized: true, AuthorizedServices: []string{}},
-	//	Apis.Rapp{ApfId: "testrapp2", IsAuthorized: false, AuthorizedServices: []string{}},
-	//}
-	//_, err = rappCollection.InsertMany(context.TODO(), newRapps)
-	//if err != nil {
-	//	panic(err)
-	//}
+	//For testing purpose: insert a few test rapps into the rapps collection
+	newRapps := []interface{}{
+		Apis.Rapp{ApfId: "testrapp1", IsAuthorized: true, AuthorizedServices: []string{}},
+		Apis.Rapp{ApfId: "testrapp2", IsAuthorized: false, AuthorizedServices: []string{}},
+	}
+	_, err = rappCollection.InsertMany(context.TODO(), newRapps)
+	if err != nil {
+		panic(err)
+	}
 
 	r := mux.NewRouter()
 	r.HandleFunc("/allServiceAPIs", Handlers.ServiceDiscoveryHandler(serviceCollection)).Methods("GET")
@@ -56,7 +57,7 @@ func main() {
 	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.GetSpecificServiceAPIHandler(serviceCollection)).Methods("GET")
 	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.UpdateServiceAPIHandler(serviceCollection, rappCollection)).Methods("PUT")
 	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.DeleteServiceAPIHandler(serviceCollection)).Methods("DELETE")
-	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.PatchServiceAPIHandler(serviceCollection)).Methods("PATCH")
+	r.HandleFunc("/{apfId}/service-apis/{serviceApiId}", Handlers.PatchServiceAPIHandler(serviceCollection, rappCollection)).Methods("PATCH")
 
 	// Data registration API routes
 	r.HandleFunc("/rapps/{rAppId}/datatypeprodcaps", Handlers.RegisterDmeTypeProdCapHandler(rappCollection, dataTypeProdCapsCollection)).Methods("POST")

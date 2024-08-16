@@ -135,129 +135,129 @@ package Apis
 }*/
 
 type PublishServiceAPI struct {
-	APIName   string `json:"apiName" validate:"required"`
-	APIID     string `json:"apiId"`
+	APIName   string `json:"apiName" bson:"apiName" validate:"required"`
+	APIID     string `json:"apiId" bson:"apiId"`
 	APIStatus struct {
-		AefIds []string `json:"aefIds"`
-	} `json:"apiStatus"`
+		AefIds []string `json:"aefIds" bson:"aefIds"`
+	} `json:"apiStatus" bson:"apiStatus"`
 	AefProfiles []struct {
-		AefId    string `json:"aefId"`
+		AefId    string `json:"aefId" bson:"aefId"`
 		Versions []struct {
-			APIVersion string `json:"apiVersion"`
-			Expiry     string `json:"expiry"`
+			APIVersion string `json:"apiVersion" bson:"apiVersion"`
+			Expiry     string `json:"expiry" bson:"expiry"`
 			Resources  []struct {
-				ResourceName   string `json:"resourceName"`
-				CommType       string `json:"commType"`
-				Uri            string `json:"uri"`
-				CustOpName     string `json:"custOpName"`
+				ResourceName   string `json:"resourceName" bson:"resourceName"`
+				CommType       string `json:"commType" bson:"commType"`
+				Uri            string `json:"uri" bson:"uri"`
+				CustOpName     string `json:"custOpName" bson:"custOpName"`
 				CustOperations []struct {
-					CommType    string   `json:"commType"`
-					CustOpName  string   `json:"custOpName"`
-					Operations  []string `json:"operations"`
-					Description string   `json:"description"`
-				} `json:"custOperations"`
-				Operations  []string `json:"operations"`
-				Description string   `json:"description"`
-			} `json:"resources"`
+					CommType    string   `json:"commType" bson:"commType"`
+					CustOpName  string   `json:"custOpName" bson:"custOpName"`
+					Operations  []string `json:"operations" bson:"operations"`
+					Description string   `json:"description" bson:"description"`
+				} `json:"custOperations" bson:"custOperations"`
+				Operations  []string `json:"operations" bson:"operations"`
+				Description string   `json:"description" bson:"description"`
+			} `json:"resources" bson:"resources"`
 			CustOperations []struct {
-				CommType    string   `json:"commType"`
-				CustOpName  string   `json:"custOpName"`
-				Operations  []string `json:"operations"`
-				Description string   `json:"description"`
-			} `json:"custOperations"`
-		} `json:"versions"`
-		Protocol              string   `json:"protocol"`
-		DataFormat            string   `json:"dataFormat"`
-		SecurityMethods       []string `json:"securityMethods"`
-		DomainName            string   `json:"domainName"`
+				CommType    string   `json:"commType" bson:"commType"`
+				CustOpName  string   `json:"custOpName" bson:"custOpName"`
+				Operations  []string `json:"operations" bson:"operations"`
+				Description string   `json:"description" bson:"description"`
+			} `json:"custOperations" bson:"custOperations"`
+		} `json:"versions" bson:"versions"`
+		Protocol              string   `json:"protocol" bson:"protocol"`
+		DataFormat            string   `json:"dataFormat" bson:"dataFormat"`
+		SecurityMethods       []string `json:"securityMethods" bson:"securityMethods"`
+		DomainName            string   `json:"domainName" bson:"domainName"`
 		InterfaceDescriptions []struct {
-			Ipv4Addr        string   `json:"ipv4Addr"`
-			Ipv6Addr        string   `json:"ipv6Addr"`
-			Fqdn            string   `json:"fqdn"`
-			Port            int      `json:"port"`
-			ApiPrefix       string   `json:"apiPrefix"`
-			SecurityMethods []string `json:"securityMethods"`
-		} `json:"interfaceDescriptions"`
+			Ipv4Addr        string   `json:"ipv4Addr" bson:"ipv4Addr"`
+			Ipv6Addr        string   `json:"ipv6Addr" bson:"ipv6Addr"`
+			Fqdn            string   `json:"fqdn" bson:"fqdn"`
+			Port            int      `json:"port" bson:"port"`
+			ApiPrefix       string   `json:"apiPrefix" bson:"apiPrefix"`
+			SecurityMethods []string `json:"securityMethods" bson:"securityMethods"`
+		} `json:"interfaceDescriptions" bson:"interfaceDescriptions"`
 		AefLocation struct {
 			CivicAddr struct {
-				Country    string `json:"country"`
-				A1         string `json:"A1"`
-				A2         string `json:"A2"`
-				A3         string `json:"A3"`
-				A4         string `json:"A4"`
-				A5         string `json:"A5"`
-				A6         string `json:"A6"`
-				PRD        string `json:"PRD"`
-				POD        string `json:"POD"`
-				STS        string `json:"STS"`
-				HNO        string `json:"HNO"`
-				HNS        string `json:"HNS"`
-				LMK        string `json:"LMK"`
-				LOC        string `json:"LOC"`
-				NAM        string `json:"NAM"`
-				PC         string `json:"PC"`
-				BLD        string `json:"BLD"`
-				UNIT       string `json:"UNIT"`
-				FLR        string `json:"FLR"`
-				ROOM       string `json:"ROOM"`
-				PLC        string `json:"PLC"`
-				PCN        string `json:"PCN"`
-				POBOX      string `json:"POBOX"`
-				ADDCODE    string `json:"ADDCODE"`
-				SEAT       string `json:"SEAT"`
-				RD         string `json:"RD"`
-				RDSEC      string `json:"RDSEC"`
-				RDBR       string `json:"RDBR"`
-				RDSUBBR    string `json:"RDSUBBR"`
-				PRM        string `json:"PRM"`
-				POM        string `json:"POM"`
-				UsageRules string `json:"usageRules"`
-				Method     string `json:"method"`
-				ProvidedBy string `json:"providedBy"`
-			} `json:"civicAddr"`
+				Country    string `json:"country" bson:"country"`
+				A1         string `json:"A1" bson:"A1"`
+				A2         string `json:"A2" bson:"A2"`
+				A3         string `json:"A3" bson:"A3"`
+				A4         string `json:"A4" bson:"A4"`
+				A5         string `json:"A5" bson:"A5"`
+				A6         string `json:"A6" bson:"A6"`
+				PRD        string `json:"PRD" bson:"PRD"`
+				POD        string `json:"POD" bson:"POD"`
+				STS        string `json:"STS" bson:"STS"`
+				HNO        string `json:"HNO" bson:"HNO"`
+				HNS        string `json:"HNS" bson:"HNS"`
+				LMK        string `json:"LMK" bson:"LMK"`
+				LOC        string `json:"LOC" bson:"LOC"`
+				NAM        string `json:"NAM" bson:"NAM"`
+				PC         string `json:"PC" bson:"PC"`
+				BLD        string `json:"BLD" bson:"BLD"`
+				UNIT       string `json:"UNIT" bson:"UNIT"`
+				FLR        string `json:"FLR" bson:"FLR"`
+				ROOM       string `json:"ROOM" bson:"ROOM"`
+				PLC        string `json:"PLC" bson:"PLC"`
+				PCN        string `json:"PCN" bson:"PCN"`
+				POBOX      string `json:"POBOX" bson:"POBOX"`
+				ADDCODE    string `json:"ADDCODE" bson:"ADDCODE"`
+				SEAT       string `json:"SEAT" bson:"SEAT"`
+				RD         string `json:"RD" bson:"RD"`
+				RDSEC      string `json:"RDSEC" bson:"RDSEC"`
+				RDBR       string `json:"RDBR" bson:"RDBR"`
+				RDSUBBR    string `json:"RDSUBBR" bson:"RDSUBBR"`
+				PRM        string `json:"PRM" bson:"PRM"`
+				POM        string `json:"POM" bson:"POM"`
+				UsageRules string `json:"usageRules" bson:"usageRules"`
+				Method     string `json:"method" bson:"method"`
+				ProvidedBy string `json:"providedBy" bson:"providedBy"`
+			} `json:"civicAddr" bson:"civicAddr"`
 			GeoArea struct {
-				Shape string `json:"shape"`
+				Shape string `json:"shape" bson:"shape"`
 				Point struct {
-					Lon float64 `json:"lon"`
-					Lat float64 `json:"lat"`
-				} `json:"point"`
-			} `json:"geoArea"`
-			DcId string `json:"dcId"`
-		} `json:"aefLocation"`
+					Lon float64 `json:"lon" bson:"lon"`
+					Lat float64 `json:"lat" bson:"lat"`
+				} `json:"point" bson:"point"`
+			} `json:"geoArea" bson:"geoArea"`
+			DcId string `json:"dcId" bson:"dcId"`
+		} `json:"aefLocation" bson:"aefLocation"`
 		ServiceKpis struct {
-			MaxReqRate   int    `json:"maxReqRate"`
-			MaxRestime   int    `json:"maxRestime"`
-			Availability int    `json:"availability"`
-			AvalComp     string `json:"avalComp"`
-			AvalGraComp  string `json:"avalGraComp"`
-			AvalMem      string `json:"avalMem"`
-			AvalStor     string `json:"avalStor"`
-			ConBand      int    `json:"conBand"`
-		} `json:"serviceKpis"`
+			MaxReqRate   int    `json:"maxReqRate" bson:"maxReqRate"`
+			MaxRestime   int    `json:"maxRestime" bson:"maxRestime"`
+			Availability int    `json:"availability" bson:"availability"`
+			AvalComp     string `json:"avalComp" bson:"avalComp"`
+			AvalGraComp  string `json:"avalGraComp" bson:"avalGraComp"`
+			AvalMem      string `json:"avalMem" bson:"avalMem"`
+			AvalStor     string `json:"avalStor" bson:"avalStor"`
+			ConBand      int    `json:"conBand" bson:"conBand"`
+		} `json:"serviceKpis" bson:"serviceKpis"`
 		UeIpRange struct {
 			UeIpv4AddrRanges []struct {
-				Start string `json:"start"`
-				End   string `json:"end"`
-			} `json:"ueIpv4AddrRanges"`
+				Start string `json:"start" bson:"start"`
+				End   string `json:"end" bson:"end"`
+			} `json:"ueIpv4AddrRanges" bson:"ueIpv4AddrRanges"`
 			UeIpv6AddrRanges []struct {
-				Start string `json:"start"`
-				End   string `json:"end"`
-			} `json:"ueIpv6AddrRanges"`
-		} `json:"ueIpRange"`
-	} `json:"aefProfiles"`
-	Description       string `json:"description"`
-	SupportedFeatures string `json:"supportedFeatures"`
+				Start string `json:"start" bson:"start"`
+				End   string `json:"end" bson:"end"`
+			} `json:"ueIpv6AddrRanges" bson:"ueIpv6AddrRanges"`
+		} `json:"ueIpRange" bson:"ueIpRange"`
+	} `json:"aefProfiles" bson:"aefProfiles"`
+	Description       string `json:"description" bson:"description"`
+	SupportedFeatures string `json:"supportedFeatures" bson:"supportedFeatures"`
 	ShareableInfo     struct {
-		IsShareable   bool     `json:"isShareable"`
-		CapifProvDoms []string `json:"capifProvDoms"`
-	} `json:"shareableInfo"`
-	ServiceAPICategory string `json:"serviceAPICategory"`
-	ApiSuppFeats       string `json:"apiSuppFeats"`
+		IsShareable   bool     `json:"isShareable" bson:"isShareable"`
+		CapifProvDoms []string `json:"capifProvDoms" bson:"capifProvDoms"`
+	} `json:"shareableInfo" bson:"shareableInfo"`
+	ServiceAPICategory string `json:"serviceAPICategory" bson:"serviceAPICategory"`
+	ApiSuppFeats       string `json:"apiSuppFeats" bson:"apiSuppFeats"`
 	PubApiPath         struct {
-		CcfIds []string `json:"ccfIds"`
-	} `json:"pubApiPath"`
-	CcfId       string `json:"ccfId"`
-	ApiProvName string `json:"apiProvName"`
+		CcfIds []string `json:"ccfIds" bson:"ccfIds"`
+	} `json:"pubApiPath" bson:"pubApiPath"`
+	CcfId       string `json:"ccfId" bson:"ccfId"`
+	ApiProvName string `json:"apiProvName" bson:"apiProvName"`
 }
 
 type GetServiceAPI struct {
