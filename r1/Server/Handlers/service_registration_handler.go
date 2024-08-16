@@ -46,7 +46,7 @@ func PublishServiceHandler(serviceCollection *mongo.Collection, rappCollection *
 		}
 
 		if !rappExists {
-			http.Error(w, "Invoker ID not found", http.StatusNotFound)
+			http.Error(w, fmt.Sprintf("Invoker ID: %v not found", apfId), http.StatusNotFound)
 			return
 		}
 
@@ -180,12 +180,22 @@ func UpdateServiceAPIHandler(serviceCollection *mongo.Collection, rappCollection
 		serviceApiId := vars["serviceApiId"]
 
 		rappFilter := bson.D{{"apf_id", apfId}}
-		rappCursor, err := rappCollection.Find(context.TODO(), rappFilter)
+		rappCursor, err := rappCollection.CountDocuments(context.TODO(), rappFilter)
 		if err != nil {
 			http.Error(w, "Failed to retrieve documents from MongoDB", http.StatusInternalServerError)
 			return
 		}
-		defer rappCursor.Close(context.TODO())
+		if rappCursor == 0 {
+			http.Error(w, fmt.Sprintf("The specified rapp: %v does not exist.", apfId), http.StatusInternalServerError)
+			return
+		}
+		rappFilter2 := bson.M{"apf_id": apfId, "authorized_services": serviceApiId}
+		rappCursor, err = rappCollection.CountDocuments(context.TODO(), rappFilter2)
+		if rappCursor == 0 {
+			http.Error(w, "The specified service does not exist or it is not authorized for this rapp.", http.StatusInternalServerError)
+			return
+		}
+		//fmt.Println(rappCursor)
 
 		var apiData Apis.ApiData
 		err = json.NewDecoder(r.Body).Decode(&apiData)
