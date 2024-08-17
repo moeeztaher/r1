@@ -172,7 +172,7 @@ func GetSpecificServiceAPIHandler(collection *mongo.Collection) http.HandlerFunc
 
 		var serviceAPI Apis.GetServiceAPI
 
-		filter := bson.M{"apiid": serviceApiId}
+		filter := bson.M{"apiId": serviceApiId}
 		err := collection.FindOne(context.TODO(), filter).Decode(&serviceAPI)
 		if err != nil {
 			http.Error(w, "Failed to retrieve document from MongoDB", http.StatusInternalServerError)
